@@ -1,0 +1,28 @@
+opam-version: "2.0"
+name: "logical"
+version: "0.1"
+synopsis: "Logical is a minimalistic logic programming library"
+description: """
+Logical is a minimalistic logic programming library
+"""
+maintainer: "Robert Toth <kkdstryker@gmail.com>"
+authors: ["Robert Toth"]
+homepage: "https://github.com/StrykerKKD/Logical"
+bug-reports: "https://github.com/StrykerKKD/Logical/issues"
+dev-repo: "git+https://github.com/StrykerKKD/Logical.git"
+doc: "https://strykerkkd.github.io/Logical/"
+license: "MIT"
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "build" "@doc" "-p" name] {with-doc}
+]
+run-test: [
+  ["dune" "runtest" "-p" name "-j" jobs]
+]
+depends: [
+  "dune" {build}
+  "alcotest" {with-test}
+  "odoc" {with-doc}
+  "ocaml" {>= "4.04.2"}
+]
