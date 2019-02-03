@@ -7,7 +7,7 @@ type value =
   | Boolean of bool
   | Variable of variable
 
-type 'a state = {
+type state = {
   variables: variable list;
   values: (variable * value) list;
 }
