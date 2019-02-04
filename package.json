@@ -1,0 +1,20 @@
+{
+    "name": "logical",
+    "version": "0.1",
+    "description": "Logical is a minimalistic logic programming library.",
+    "license": "MIT",
+    "esy": {
+      "build": "dune build -p #{self.name}"
+    },
+    "scripts": {
+      "test": "esy x hello"
+    },
+    "dependencies": {
+      "@opam/dune": "*",
+      "ocaml": ">=4.04.2"
+    },
+    "devDependencies": {
+      "@opam/merlin": "*",
+      "ocaml": ">=4.04.2"
+    }
+  }
