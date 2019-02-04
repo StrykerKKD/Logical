@@ -39,7 +39,7 @@ let rec value_of_state state value =
     (match List.assoc_opt variable values with
     | Some value -> value_of_state state value
     | None -> Variable variable)
-  | value -> value
+  | _ -> value
   
 
 let unify_state state value_a value_b =
