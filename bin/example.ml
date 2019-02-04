@@ -12,6 +12,8 @@ type state = {
   values: (variable * value) list;
 }
 
+type goal = state -> state Stream.t
+
 let empty_state = {
   variables = [];
   values = [];
@@ -30,18 +32,29 @@ let create_state variables values = {
   values;
 }
 
-let rec value_of_state state variable =
-  let values = state.values in
-  match List.assoc_opt variable values with
-  | Some (Variable value) -> value_of_state state value
-  | Some value -> value
-  | None -> Variable variable
+let rec value_of_state state value =
+  match value with
+  | Variable variable -> 
+    let values = state.values in
+    (match List.assoc_opt variable values with
+    | Some value -> value_of_state state value
+    | None -> Variable variable)
+  | value -> value
+  
 
-let unify_state state variable_a variable_b =
-  let a = value_of_state state variable_a in
-  let b = value_of_state state variable_b in
-  match a, b with
+let unify_state state value_a value_b =
+  let new_value_a = value_of_state state value_a in
+  let new_value_b = value_of_state state value_b in
+  match new_value_a, new_value_b with
   | a, b when a = b -> Some state
-  | Variable a, _ -> Some (assing_values state [(a, b)])
-  | _, Variable b -> Some (assing_values state [(b, a)])
+  | Variable a, _ -> Some (assing_values state [a, new_value_b])
+  | _, Variable b -> Some (assing_values state [b, new_value_a])
   | _, _ -> None
+
+let pursue_goal goal state =
+  goal state
+
+let equal_goal value_a value_b = (fun state -> 
+  let state = unify_state state value_a value_b in
+  Stream.of_list [state]
+)
