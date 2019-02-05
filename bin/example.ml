@@ -58,3 +58,9 @@ let equal_goal value_a value_b = (fun state ->
   let state = unify_state state value_a value_b in
   Stream.of_list [state]
 )
+
+let with_variables_goal variables goal_maker = (fun state ->
+  let new_state = create_variables state variables in
+  let goal = goal_maker () in
+  pursue_goal goal new_state
+)
