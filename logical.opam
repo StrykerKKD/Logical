@@ -24,5 +24,6 @@ depends: [
   "dune" {build}
   "alcotest" {with-test}
   "odoc" {with-doc}
+  "base" {>= "0.11.1"}
   "ocaml" {>= "4.04.2"}
 ]
