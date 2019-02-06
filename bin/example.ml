@@ -12,7 +12,7 @@ type state = {
   values: (variable * value) list;
 }
 
-type goal = state -> state Stream.t
+type goal = state -> state Base.Sequence.t
 
 let empty_state = {
   variables = [];
@@ -56,11 +56,22 @@ let pursue_goal goal state =
 
 let equal_goal value_a value_b = (fun state -> 
   let state = unify_state state value_a value_b in
-  Stream.of_list [state]
+  Base.Sequence.singleton state
 )
 
 let with_variables_goal variables goal_maker = (fun state ->
   let new_state = create_variables state variables in
   let goal = goal_maker () in
   pursue_goal goal new_state
+)
+
+let either_goal first_goal second_goal = (fun state -> 
+  let first_stream = pursue_goal first_goal state in
+  let second_stream = pursue_goal second_goal state in
+  Base.Sequence.round_robin [first_stream; second_stream]
+)
+
+let either_goal_general goals = (fun state -> 
+  let streams = Base.List.map goals ~f:(fun goal -> pursue_goal goal state) in
+  Base.Sequence.round_robin streams
 )
