@@ -75,3 +75,13 @@ let either_goal_general goals = (fun state ->
   let streams = Base.List.map goals ~f:(fun goal -> pursue_goal goal state) in
   Base.Sequence.round_robin streams
 )
+
+let both_goal first_goal second_goal = (fun state ->
+  let first_states = pursue_goal first_goal state in
+  let sum_states = Base.Sequence.filter_map first_states ~f:(fun first_state -> 
+    match first_state with
+    | Some state -> Some (pursue_goal second_goal state)
+    | None -> None
+  ) in
+  Base.Sequence.interleave sum_states
+)
