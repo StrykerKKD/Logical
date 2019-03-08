@@ -1,21 +1,22 @@
-type variable = Base.String.t
+type variable = string
 
 module rec ValueType: sig
   type t = 
-    | Int of Base.Int.t
-    | Float of Base.Float.t
-    | Str of Base.String.t
-    | Bool of Base.Bool.t
+    | Int of int
+    | Float of float
+    | Str of string
+    | Bool of bool
     | Var of variable
     | Set of (t, ValueComparator.comparator_witness) Base.Set.t
   val compare: t -> t -> int
   val sexp_of_t: t -> Base.Sexp.t
+  val to_string: t -> string
 end = struct 
   type t = 
-    | Int of Base.Int.t
-    | Float of Base.Float.t
-    | Str of Base.String.t
-    | Bool of Base.Bool.t
+    | Int of int
+    | Float of float
+    | Str of string
+    | Bool of bool
     | Var of variable
     | Set of (t, ValueComparator.comparator_witness) Base.Set.t
   let compare first_tagged_value second_tagged_value =
@@ -38,6 +39,7 @@ end = struct
   and set_to_string set =
     let converted_set = Base.Set.to_list set in
     Base.List.map converted_set ~f:sexp_of_t
+  let to_string tagged_value = sexp_of_t tagged_value |> Base.Sexp.to_string
 end
 and ValueComparator : Base.Comparator.S with type t = ValueType.t =
 struct
@@ -45,48 +47,37 @@ struct
   include Base.Comparator.Make(ValueType)
 end
 
-type state = {
-  variables: variable list;
-  values: (variable * ValueType.t) list;
-}
+type state = (variable * ValueType.t) list
 
 type goal = state -> state Base.Sequence.t
 
-let empty_state = {
-  variables = [];
-  values = [];
-}
+let assignment_to_string (variable, value) =
+  variable ^ ": " ^ ValueType.to_string value
 
-let create_variables state new_variables = {
-  state with variables = List.append state.variables new_variables
-}
+let state_to_string state =
+  let assignments = Base.List.map state ~f:assignment_to_string in
+  Base.String.concat ~sep:"\n" ("Assigments:" :: assignments)
 
-let assing_values state new_values = {
-  state with values = List.append state.values new_values
-}
+let empty_state = []
 
-let create_state variables values = {
-  variables;
-  values;
-}
+let add_assignment state assignment = 
+  List.cons assignment state
 
 let rec value_of_state state value =
   match value with
   | ValueType.Var variable -> 
-    let values = state.values in
-    (match List.assoc_opt variable values with
+    (match List.assoc_opt variable state with
     | Some value -> value_of_state state value
     | None -> ValueType.Var variable)
   | _ -> value
   
-
 let unify_state state value_a value_b =
   let new_value_a = value_of_state state value_a in
   let new_value_b = value_of_state state value_b in
   match new_value_a, new_value_b with
   | a, b when a = b -> Some state
-  | ValueType.Var variable, value -> Some (assing_values state [variable, value])
-  | value, ValueType.Var variable -> Some (assing_values state [variable, value])
+  | ValueType.Var variable, value -> Some (add_assignment state (variable, value))
+  | value, ValueType.Var variable -> Some (add_assignment state (variable, value))
   | _, _ -> None
 
 let pursue_goal goal state =
@@ -95,12 +86,6 @@ let pursue_goal goal state =
 let equal_goal value_a value_b = (fun state -> 
   let state = unify_state state value_a value_b in
   Base.Sequence.singleton state
-)
-
-let with_variables_goal variables goal_maker = (fun state ->
-  let new_state = create_variables state variables in
-  let goal = goal_maker () in
-  pursue_goal goal new_state
 )
 
 let either_goal first_goal second_goal = (fun state -> 
@@ -135,4 +120,14 @@ let in_set_goal value_a value_b = (fun state ->
   | ValueType.Var variable, ValueType.Set set -> desugar_set_to_logic set variable state
   | ValueType.Set set, ValueType.Var variable -> desugar_set_to_logic set variable state
   | _ -> Base.Sequence.singleton None
+)
+
+let my_set = Base.Set.of_list (module ValueComparator) [ValueType.Int 1; ValueType.Int 2; ValueType.Int 3]
+let example_goal = in_set_goal (ValueType.Var "a") (ValueType.Set my_set)
+let result = pursue_goal example_goal empty_state
+let result_list = Base.Sequence.to_list_rev result
+let () = Base.List.iter result_list ~f:(fun element ->
+  match element with
+  | Some value -> state_to_string value |> print_endline
+  | None -> ()
 )
