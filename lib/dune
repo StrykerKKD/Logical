@@ -1,3 +1,4 @@
 (library
-  (name lib)
-  (public_name logical))
+  (name logical)
+  (public_name logical)
+  (libraries base))

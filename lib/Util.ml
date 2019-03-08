@@ -1,2 +1,0 @@
-let hello () =
-  "hello world"
