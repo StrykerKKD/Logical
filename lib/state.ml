@@ -24,4 +24,7 @@ let assignment_to_string (variable, value) =
 
 let to_string state =
   let assignments = Base.List.map state ~f:assignment_to_string in
-  Base.String.concat ~sep:"\n" ("Assigments:" :: assignments)
+  if List.length assignments <> 0 then
+    Base.String.concat ~sep:"\n" ("Assignments:" :: assignments)
+  else
+    ""
