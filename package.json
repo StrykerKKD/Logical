@@ -8,7 +8,8 @@
     },
     "scripts": {
       "test": "esy dune runtest -f",
-      "doc": "esy dune build @doc"
+      "doc": "esy dune build @doc",
+      "update-doc": "esy rsync -r #{self.target_dir}/default/_doc/_html/ docs/"
     },
     "dependencies": {
       "@opam/dune": "*",

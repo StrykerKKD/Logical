@@ -47,6 +47,10 @@ struct
   include Base.Comparator.Make(Type)
 end
 
+type state = (variable * Type.t) list
+
+type goal = state -> state option Base.Sequence.t
+
 let int value = Type.Int value
 
 let float value = Type.Float value
