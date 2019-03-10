@@ -62,3 +62,5 @@ let bool value = ValueType.Bool value
 let var value = ValueType.Var value
 
 let set value = ValueType.Set value
+
+let to_string = ValueType.to_string

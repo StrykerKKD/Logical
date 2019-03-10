@@ -1,4 +1,5 @@
 let test_suites = [
+    "Value_test", Value_test.tests;
     "State_test", State_test.tests;
 ]
 
