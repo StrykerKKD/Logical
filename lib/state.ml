@@ -12,7 +12,7 @@ let unify state value_a value_b =
   let new_value_a = value_of state value_a in
   let new_value_b = value_of state value_b in
   match new_value_a, new_value_b with
-  | a, b when (compare a b) = 0 -> Some state
+  | a, b when (Value.Type.compare a b) = 0 -> Some state
   | Value.Type.Var variable, value -> Some ((variable, value) :: state)
   | value, Value.Type.Var variable -> Some ((variable, value) :: state)
   | _, _ -> None
