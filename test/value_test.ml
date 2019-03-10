@@ -1,4 +1,5 @@
-open Logical.Value
+open Logical
+open Value
 
 let test_int () =
   let actual = (Type.Int 42) = (int 42) in
