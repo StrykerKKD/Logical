@@ -9,7 +9,7 @@ let test_to_string_on_empty_state () =
 
 let test_to_string_on_non_empty_state () =
   Alcotest.(check string) "to_string should return specified value for nonempty state" 
-  "Assignments:\na: (Int 1)\nb: (Int 2)" (to_string ["a",Logical.Value.int 1;"b",Logical.Value.int 2])
+  "(Assignments((a(Int 1))(b(Int 2))))" (to_string ["a",Logical.Value.int 1;"b",Logical.Value.int 2])
 
 let test_value_of_on_non_variable () =
   let expected = Logical.Value.int 1 in
@@ -64,6 +64,45 @@ let test_unify_on_non_equal_values () =
   Alcotest.(check bool) "unify should return None when both input is non variable"
   true (expected = actual)
 
+let test_unify_on_two_equal_set () =
+  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+    [Logical.Value.int 1; Logical.Value.int 2; Logical.Value.int 3]) in
+  let expected = Some ["a",Logical.Value.int 1; "b",Logical.Value.int 1] in
+  let actual = unify ["a",Logical.Value.int 1; "b",Logical.Value.int 1] 
+    test_set test_set in
+  Alcotest.(check bool) "unify should return state when both set is equal"
+  true (expected = actual)
+
+let test_unify_on_two_non_equal_set () =
+  let test_set_a = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+    [Logical.Value.int 1; Logical.Value.int 2; Logical.Value.int 3]) in
+  let test_set_b = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+    [Logical.Value.int 4; Logical.Value.int 5; Logical.Value.int 6]) in
+  let expected = None in
+  let actual = unify ["a",Logical.Value.int 1; "b",Logical.Value.int 1] 
+    test_set_a test_set_b in
+  Alcotest.(check bool) "unify should return None when both set is non equal"
+  true (expected = actual)
+
+let test_unify_on_set_and_value () =
+  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+    [Logical.Value.int 1; Logical.Value.int 2; Logical.Value.int 3]) in
+  let expected = None in
+  let actual = unify ["a",Logical.Value.int 1; "b",Logical.Value.int 1] 
+    test_set (Logical.Value.int 1) in
+  Alcotest.(check bool) "unify should return none when input is a set and a value"
+  true (expected = actual)
+
+let test_unify_on_set_and_variable () =
+  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+    [Logical.Value.int 1; Logical.Value.int 2; Logical.Value.int 3]) in
+  let expected = "(Assignments((a(Set((Int 1)(Int 2)(Int 3))))))" in
+  let actual = unify empty test_set (Logical.Value.var "a") 
+    |> Base.Option.value ~default:[]
+    |> Logical.State.to_string in
+  Alcotest.(check string) "unify should return new state with set added to it"
+  expected actual
+
 let tests = [
   "test_empty_state", `Quick, test_empty_state;
   "test_to_string_on_empty_state", `Quick, test_to_string_on_empty_state;
@@ -76,4 +115,8 @@ let tests = [
   "test_unify_on_new_right_variable", `Quick, test_unify_on_new_right_variable;
   "test_unify_on_non_equal_variable_values", `Quick, test_unify_on_non_equal_variable_values;
   "test_unify_on_non_equal_values", `Quick, test_unify_on_non_equal_values;
+  "test_unify_on_two_equal_set", `Quick, test_unify_on_two_equal_set;
+  "test_unify_on_two_non_equal_set", `Quick, test_unify_on_two_non_equal_set;
+  "test_unify_on_set_and_value", `Quick, test_unify_on_set_and_value;
+  "test_unify_on_set_and_variable", `Quick, test_unify_on_set_and_variable;
 ]
