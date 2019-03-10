@@ -14,9 +14,7 @@ let unify state value_a value_b =
   let new_value_a = value_of state value_a in
   let new_value_b = value_of state value_b in
   match new_value_a, new_value_b with
-  | ValueType.Set a_set, ValueType.Set b_set -> 
-    if Base.Set.equal a_set b_set then Some state else None
-  | a, b when a = b -> Some state
+  | a, b when (compare a b) = 0 -> Some state
   | ValueType.Var variable, value -> Some ((variable, value) :: state)
   | value, ValueType.Var variable -> Some ((variable, value) :: state)
   | _, _ -> None
