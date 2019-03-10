@@ -1,5 +1,3 @@
-open Value
-
 let equal value_a value_b = (fun state -> 
   let state = State.unify state value_a value_b in
   Base.Sequence.singleton state
@@ -28,13 +26,13 @@ let both first_goal second_goal = (fun state ->
 
 let pursue_desugared_set set variable state =
   let value_list = Base.Set.to_list set in
-  let both_goals = Base.List.map value_list ~f:(fun value -> equal (ValueType.Var variable) value) in
+  let both_goals = Base.List.map value_list ~f:(fun value -> equal (Value.Type.Var variable) value) in
   let either_goal = either_multi both_goals in 
   either_goal state
 
 let in_set value_a value_b = (fun state -> 
   match value_a, value_b with
-  | ValueType.Var variable, ValueType.Set set -> pursue_desugared_set set variable state
-  | ValueType.Set set, ValueType.Var variable -> pursue_desugared_set set variable state
+  | Value.Type.Var variable, Value.Type.Set set -> pursue_desugared_set set variable state
+  | Value.Type.Set set, Value.Type.Var variable -> pursue_desugared_set set variable state
   | _ -> Base.Sequence.singleton None
 )

@@ -1,13 +1,13 @@
 type variable = string
 
-module rec ValueType: sig
+module rec Type: sig
   type t = 
     | Int of int
     | Float of float
     | Str of string
     | Bool of bool
     | Var of variable
-    | Set of (t, ValueComparator.comparator_witness) Base.Set.t
+    | Set of (t, Comparator.comparator_witness) Base.Set.t
   val compare: t -> t -> int
   val sexp_of_t: t -> Base.Sexp.t
   val to_string: t -> string
@@ -18,7 +18,7 @@ end = struct
     | Str of string
     | Bool of bool
     | Var of variable
-    | Set of (t, ValueComparator.comparator_witness) Base.Set.t
+    | Set of (t, Comparator.comparator_witness) Base.Set.t
   let compare first_tagged_value second_tagged_value =
     match first_tagged_value, second_tagged_value with
     | Int first_value, Int second_value -> Base.Int.compare first_value second_value
@@ -41,26 +41,22 @@ end = struct
     Base.List.map converted_set ~f:sexp_of_t
   let to_string tagged_value = sexp_of_t tagged_value |> Base.Sexp.to_string
 end
-and ValueComparator : Base.Comparator.S with type t = ValueType.t =
+and Comparator : Base.Comparator.S with type t = Type.t =
 struct
-  type t = ValueType.t
-  include Base.Comparator.Make(ValueType)
+  type t = Type.t
+  include Base.Comparator.Make(Type)
 end
 
-type state = (variable * ValueType.t) list
+let int value = Type.Int value
 
-type goal = state -> state Base.Sequence.t
+let float value = Type.Float value
 
-let int value = ValueType.Int value
+let str value = Type.Str value
 
-let float value = ValueType.Float value
+let bool value = Type.Bool value
 
-let str value = ValueType.Str value
+let var value = Type.Var value
 
-let bool value = ValueType.Bool value
+let set value = Type.Set value
 
-let var value = ValueType.Var value
-
-let set value = ValueType.Set value
-
-let to_string = ValueType.to_string
+let to_string = Type.to_string

@@ -65,7 +65,7 @@ let test_unify_on_non_equal_values () =
   true (expected = actual)
 
 let test_unify_on_two_equal_set () =
-  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.Comparator) 
     [Logical.Value.int 1; Logical.Value.int 2; Logical.Value.int 3]) in
   let expected = Some ["a",Logical.Value.int 1; "b",Logical.Value.int 1] in
   let actual = unify ["a",Logical.Value.int 1; "b",Logical.Value.int 1] 
@@ -74,9 +74,9 @@ let test_unify_on_two_equal_set () =
   true (expected = actual)
 
 let test_unify_on_two_non_equal_set () =
-  let test_set_a = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+  let test_set_a = Logical.Value.set (Base.Set.of_list (module Logical.Value.Comparator) 
     [Logical.Value.int 1; Logical.Value.int 2; Logical.Value.int 3]) in
-  let test_set_b = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+  let test_set_b = Logical.Value.set (Base.Set.of_list (module Logical.Value.Comparator) 
     [Logical.Value.int 4; Logical.Value.int 5; Logical.Value.int 6]) in
   let expected = None in
   let actual = unify ["a",Logical.Value.int 1; "b",Logical.Value.int 1] 
@@ -85,7 +85,7 @@ let test_unify_on_two_non_equal_set () =
   true (expected = actual)
 
 let test_unify_on_set_and_value () =
-  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.Comparator) 
     [Logical.Value.int 1; Logical.Value.int 2; Logical.Value.int 3]) in
   let expected = None in
   let actual = unify ["a",Logical.Value.int 1; "b",Logical.Value.int 1] 
@@ -94,7 +94,7 @@ let test_unify_on_set_and_value () =
   true (expected = actual)
 
 let test_unify_on_set_and_variable () =
-  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.ValueComparator) 
+  let test_set = Logical.Value.set (Base.Set.of_list (module Logical.Value.Comparator) 
     [Logical.Value.int 1; Logical.Value.int 2; Logical.Value.int 3]) in
   let expected = "(Assignments((a(Set((Int 1)(Int 2)(Int 3))))))" in
   let actual = unify empty test_set (Logical.Value.var "a") 
