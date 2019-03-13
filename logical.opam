@@ -1,9 +1,12 @@
 opam-version: "2.0"
 name: "logical"
 version: "0.1"
-synopsis: "Logical is a minimalistic logic programming library"
+synopsis: "Logical is a minimalistic logic programming inspired by microKanren"
 description: """
-Logical is a minimalistic logic programming library.
+Logical is a minimalistic logic programming inspired by microKanren, which is
+- Simple implementation with only a few building blocks
+- Easy to understand and use
+- Supports negation free constraint logic programming
 """
 maintainer: "Robert Toth <kkdstryker@gmail.com>"
 authors: ["Robert Toth"]
