@@ -70,7 +70,7 @@ General rules for using Logical:
 ```ocaml
 let equal_goal = Goal.equal (Value.var "a") (Value.int 42)
 let state_list = equal_goal State.empty |> Base.Sequence.to_list
-(* state_list is [ [("a",Value.Int 42)] ]*)
+(* state_list is [ Some[("a",Value.Int 42)] ]*)
 ```
 In this case `state_list` only has one state were `a` is equal with `42`.
 
@@ -80,7 +80,7 @@ let a_goal = Goal.equal (Value.var "a") (Value.int 42)
 let b_goal = Goal.equal (Value.var "b") (Value.int 21)
 let either_goal = Goal.either a_goal b_goal
 let state_list = either_goal State.empty |> Base.Sequence.to_list
-(* state_list is [ [("a",Value.Int 42)]; [("b",Value.Int 21)] ]*)
+(* state_list is [ Some[("a",Value.Int 42)]; Some[("b",Value.Int 21)] ]*)
 ```
 In this case `state_list` has two states:
 - state where `a` is equal with `42`
@@ -93,7 +93,7 @@ let b_goal = Goal.equal (Value.var "b") (Value.int 21)
 let goal_list = [a_goal; b_goal]
 let either_goal = Goal.either_multi goal_list
 let state_list = either_goal State.empty |> Base.Sequence.to_list
-(* state_list is [ [("a",Value.Int 42)]; [("b",Value.Int 21)] ]*)
+(* state_list is [ Some[("a",Value.Int 42)]; Some[("b",Value.Int 21)] ]*)
 ```
 
 ### both
@@ -102,7 +102,7 @@ let a_goal = Goal.equal (Value.var "a") (Value.int 42)
 let b_goal = Goal.equal (Value.var "b") (Value.int 21)
 let both_goal = Goal.both a_goal b_goal
 let state_list = both_goal State.empty |> Base.Sequence.to_list
-(* state_list is [ [("a",Value.Int 42); ("b",Value.Int 21)] ]*)
+(* state_list is [ Some[("a",Value.Int 42); ("b",Value.Int 21)] ]*)
 ```
 In this case `state_list` has a state with two assignments:
 - in the first assignment `a` is equal with `42`
@@ -114,7 +114,7 @@ in_set goal is basically a sintactic sugar for an `either_multi` where every goa
 let my_set = Base.Set.of_list (module Value.Comparator) [Value.int 42; Value.int 21]
 let in_set_gaol = Goal.in_set (Value.var "a") (Value.set my_set)
 let state_list = in_set_gaol State.empty |> Base.Sequence.to_list
-(* state_list is [ [("a",Value.Int 42)]; [("a",Value.Int 21)] ]*)
+(* state_list is [ Some[("a",Value.Int 42)]; Some[("a",Value.Int 21)] ]*)
 ```
 In this case `state_list` has two states with the same variable(`a`) with two different values: `42` and `21`
 
