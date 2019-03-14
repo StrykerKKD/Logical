@@ -13,8 +13,8 @@
     },
     "dependencies": {
       "@opam/dune": "*",
-      "@opam/base": ">=0.11.1",
-      "ocaml": ">=4.04.2"
+      "@opam/base": ">=0.12.0",
+      "ocaml": ">=4.04.2 <4.08.0"
     },
     "devDependencies": {
       "@opam/merlin": "*",

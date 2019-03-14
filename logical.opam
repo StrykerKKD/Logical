@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "logical"
-version: "0.1"
+version: "0.1.0"
 synopsis: "Logical is a minimalistic logic programming inspired by microKanren"
 description: """
 Logical is a minimalistic logic programming inspired by microKanren, which is
@@ -27,6 +27,6 @@ depends: [
   "dune" {build}
   "alcotest" {with-test}
   "odoc" {with-doc}
-  "base" {>= "0.11.1"}
-  "ocaml" {>= "4.04.2"}
+  "base" {>= "0.12.0"}
+  "ocaml" {>= "4.04.2" & < "4.08.0"}
 ]
