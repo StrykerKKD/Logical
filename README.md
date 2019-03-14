@@ -82,9 +82,9 @@ let either_goal = Goal.either a_goal b_goal
 let state_list = either_goal State.empty |> Base.Sequence.to_list
 (* state_list is [ Some[("a",Value.Int 42)]; Some[("b",Value.Int 21)] ]*)
 ```
-In this case `state_list` has two states:
-- state where `a` is equal with `42`
-- state where `b` is equal with `21`
+In this case `state_list` has two states where:
+- `a` is equal with `42`
+- `b` is equal with `21`
 
 `either_multi` is the same as `either` only more general, because it expects a list of goals.
 ```ocaml
@@ -102,11 +102,11 @@ let a_goal = Goal.equal (Value.var "a") (Value.int 42)
 let b_goal = Goal.equal (Value.var "b") (Value.int 21)
 let both_goal = Goal.both a_goal b_goal
 let state_list = both_goal State.empty |> Base.Sequence.to_list
-(* state_list is [ Some[("a",Value.Int 42); ("b",Value.Int 21)] ]*)
+(* state_list is [ Some[("b",Value.Int 21); ("a",Value.Int 42)] ]*)
 ```
-In this case `state_list` has a state with two assignments:
-- in the first assignment `a` is equal with `42`
-- in the second assignment `b` is equal with `21`
+In this case `state_list` has a state with two assignments where:
+- `a` is equal with `42`
+- `b` is equal with `21`
 
 ### in_set
 in_set goal is basically a sintactic sugar for an `either_multi` where every goal has the same variable.
