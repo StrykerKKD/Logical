@@ -12,7 +12,7 @@ To understand Logical first you need to understands it's basic building blocks w
 - Goal
 
 ### Value
-Logical is basically could be seen as a mini programming language or DLS, which allows us to use logic programming in Ocaml/ReasonML. Because it's a programming language it means that it has it own (value) type system:
+Logical is basically could be seen as a embeded programming language(or DSL), which allows us to use logic programming in Ocaml. It also means that it has it own (value) type system:
 ```ocaml
 type variable = string
 
@@ -140,3 +140,7 @@ Run repl: `esy utop`
 Generate Doc: `esy doc`
 
 Update docs folder: `esy update-doc`
+
+## Notable resources
+- [Hello, declarative world](https://codon.com/hello-declarative-world)
+- [miniKanren](http://minikanren.org/)
