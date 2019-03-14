@@ -3,7 +3,7 @@ let empty = []
 let rec value_of state value =
   match value with
   | Value.Type.Var variable -> 
-    (match List.assoc_opt variable state with
+    (match Base.List.Assoc.find state ~equal:Base.String.equal variable with
     | Some value -> value_of state value
     | None -> Value.Type.Var variable)
   | Value.Type.Set set -> 
