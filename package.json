@@ -21,6 +21,6 @@
       "@opam/utop": "*",
       "@opam/alcotest": "*",
       "@opam/odoc": "*",
-      "ocaml": ">=4.04.2"
+      "ocaml": ">=4.04.2 <4.08.0"
     }
   }
