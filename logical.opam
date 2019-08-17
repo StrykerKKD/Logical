@@ -28,5 +28,5 @@ depends: [
   "alcotest" {with-test}
   "odoc" {with-doc}
   "base" {>= "0.12.0"}
-  "ocaml" {>= "4.04.2" & < "4.08.0"}
+  "ocaml" {>= "4.04.2"}
 ]

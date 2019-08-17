@@ -14,13 +14,13 @@
     "dependencies": {
       "@opam/dune": "*",
       "@opam/base": ">=0.12.0",
-      "ocaml": ">=4.04.2 <4.08.0"
+      "ocaml": ">=4.04.2"
     },
     "devDependencies": {
       "@opam/merlin": "*",
       "@opam/utop": "*",
       "@opam/alcotest": "*",
       "@opam/odoc": "*",
-      "ocaml": ">=4.04.2 <4.08.0"
+      "ocaml": ">=4.04.2"
     }
   }
