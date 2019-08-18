@@ -1,4 +1,4 @@
-(executable
-  (name example)
-  (public_name example)
+(executables
+  (names example knowledge_base)
+  (public_names example knowledge_base)
   (libraries logical base))
