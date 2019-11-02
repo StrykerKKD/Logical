@@ -57,7 +57,7 @@ let _ = print_state_stream "another friends" another_friend_state_stream
 
 
 let first_lover_var = "first_lover_var"
-let second_lover_var = "first_lover_var"
+let second_lover_var = "second_lover_var"
 
 let loves first_lover second_lover =
   Goal.both
@@ -134,3 +134,36 @@ let mother_querying mother child =
 let mother_state_stream = mother_querying (Value.str "marry") (Value.str "john")
 
 let _ = print_state_stream "mother" mother_state_stream
+
+let friendzoned_list_querying lover = 
+  let states = loves_db [first_lover_var,lover] |> Base.Sequence.to_list |> Base.List.filter_opt in
+  Base.List.exists states ~f:(fun state -> 
+    let other_lover = State.value_of state (Value.var second_lover_var) in
+    let other_states = loves_db [first_lover_var,other_lover; second_lover_var,lover] |> Base.Sequence.to_list |> Base.List.filter_opt in
+    Base.List.length other_states = 0
+  )
+
+let _ = friendzoned_list_querying (Value.str "john") |> Printf.printf "%B \n"
+
+let friendzoned_sequence_querying lover = 
+  loves_db [first_lover_var,lover] |> Base.Sequence.filter_opt |> Base.Sequence.exists ~f:(fun state -> 
+    let other_lover = State.value_of state (Value.var second_lover_var) in
+    loves_db [first_lover_var,other_lover; second_lover_var,lover] |> Base.Sequence.filter_opt |> Base.Sequence.length = 0
+  )
+
+let _ = friendzoned_sequence_querying (Value.str "john") |> Printf.printf "%B \n"
+
+let friendzoned_set_querying lover = 
+  let other_lovers = loves_db [first_lover_var,lover] 
+    |> Base.Sequence.to_list 
+    |> Base.List.filter_opt 
+    |> Base.List.map ~f:(fun state -> State.value_of state (Value.var second_lover_var))
+    |> Base.Set.of_list (module Value.Comparator) in
+  Goal.both
+    (Goal.in_set (Value.var first_lover_var) (Value.set other_lovers))
+    loves_db
+      [second_lover_var,lover]
+
+let friendzoned_state_stream = friendzoned_set_querying (Value.str "john")
+
+let _ = print_state_stream "friendzoned" friendzoned_state_stream
