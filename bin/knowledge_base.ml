@@ -153,6 +153,16 @@ let friendzoned_sequence_querying lover =
 
 let _ = friendzoned_sequence_querying (Value.str "john") |> Printf.printf "%B \n"
 
+let friendzoned_sequence_querying_2 lover = 
+  loves_db [first_lover_var,lover] 
+    |> Base.Sequence.filter_opt
+    |> Base.Sequence.concat_map ~f:(fun state ->
+      let other_lover = State.value_of state (Value.var second_lover_var) in
+      loves_db [first_lover_var,other_lover; second_lover_var,lover]) 
+    |> Base.Sequence.filter_opt |> Base.Sequence.length = 0
+
+let _ = friendzoned_sequence_querying_2 (Value.str "john") |> Printf.printf "%B \n"
+
 let friendzoned_set_querying lover = 
   let other_lovers = loves_db [first_lover_var,lover] 
     |> Base.Sequence.to_list 
@@ -167,3 +177,28 @@ let friendzoned_set_querying lover =
 let friendzoned_state_stream = friendzoned_set_querying (Value.str "john")
 
 let _ = print_state_stream "friendzoned" friendzoned_state_stream
+
+
+let domain_a_var = Value.var "domain_a_var"
+let domain_b_var = Value.var "domain_b_var"
+let domain_c_var = Value.var "domain_c_var"
+let domain_d_var = Value.var "domain_d_var"
+let domain_e_var = Value.var "domain_e_var"
+
+let universal_set = Base.Set.of_list (module Value.Comparator) [Value.str "red"; Value.str "green"; Value.str "blue"]
+let domain_state_stream = Goal.in_set domain_a_var (Value.set universal_set) [] 
+  |> Base.Sequence.filter_opt
+  |> Base.Sequence.concat_map ~f:(fun state -> 
+    let smaller_set = Base.Set.remove universal_set (State.value_of state domain_a_var) in
+    (Goal.both
+      (Goal.in_set domain_b_var (Value.set smaller_set))
+      (Goal.equal domain_b_var domain_d_var)) state)
+  |> Base.Sequence.filter_opt
+  |> Base.Sequence.concat_map ~f:(fun state -> 
+    let smaller_set = Base.Set.remove universal_set (State.value_of state domain_a_var) in
+    let even_smaller_set =  Base.Set.remove smaller_set (State.value_of state domain_b_var) in
+    (Goal.both
+      (Goal.in_set domain_c_var (Value.set even_smaller_set))
+      (Goal.equal domain_c_var domain_e_var)) state)
+
+let _ = print_state_stream "domain" domain_state_stream
