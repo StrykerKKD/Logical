@@ -3,20 +3,14 @@ name: Logical CI
 on: [push]
 
 jobs:
-  build:
-
+  build-and-test:
     runs-on: ${{ matrix.os }}
-    
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-
+        os: [ubuntu-latest, macOS-latest]
     steps:
     - uses: actions/checkout@v1
-    - name: Setup Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: '10.x'
+    - uses: actions/setup-node@v1
     - name: Install Esy
       run: npm install -g esy
     - name: Install dependencies
@@ -25,3 +19,15 @@ jobs:
       run: esy build
     - name: Run tests
       run: esy test
+      
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: Install Esy
+      run: npm install -g esy
+    - name: Install dependencies
+      run: esy install
+    - name: Build the project
+      run: esy build
