@@ -202,3 +202,55 @@ let domain_state_stream = Goal.in_set domain_a_var (Value.set universal_set) []
       (Goal.equal domain_c_var domain_e_var)) state)
 
 let _ = print_state_stream "domain" domain_state_stream
+
+
+let man_set = Base.Set.of_list (module Value.Comparator) [Value.str "george"; Value.str "john"; Value.str "robert"]
+let woman_set = Base.Set.of_list (module Value.Comparator) [Value.str "george"; Value.str "john"; Value.str "robert"]
+let person_set = Base.Set.union man_set woman_set
+let location_set = Base.Set.of_list (module Value.Comparator) [Value.str "bathroom"; Value.str "dining"; Value.str "kitchen"; Value.str "living room"; Value.str "pantry"; Value.str "study"]
+let weapon_set = Base.Set.of_list (module Value.Comparator) [Value.str "bag"; Value.str "firearm"; Value.str "gas"; Value.str "knife"; Value.str "poison"; Value.str "rope"]
+
+let bathroom_var = Value.var "bathroom"
+let dining_var = Value.var "dining"
+let kitchen_var = Value.var "kitchen"
+let living_room_var = Value.var "living room"
+let pantry_var = Value.var "pantry"
+let study_var = Value.var "study"
+
+let bag_var = Value.var "bag"
+let firearm_var = Value.var "firearm"
+let gas_var = Value.var "gas"
+let knife_var = Value.var "knife"
+let poison_var = Value.var "poison"
+let rope_var = Value.var "rope"
+
+(*let unique_people a b c d e f = 
+  Goal.in_set a (Value.set person_set) State.empty
+  |> Base.Sequence.filter_opt
+  |> Base.Sequence.concat_map ~f:(fun state -> 
+    let selected_set = Base.Set.of_list (module Value.Comparator) [(State.value_of state a)] in
+    let minus_a = Base.Set.diff person_set selected_set in
+    Goal.in_set b (Value.set minus_a) state)
+  |> Base.Sequence.filter_opt
+  |> Base.Sequence.concat_map ~f:(fun state -> 
+    let selected_set = Base.Set.of_list (module Value.Comparator) [(State.value_of state a); (State.value_of state b)] in
+    let minus_a_b = Base.Set.diff person_set selected_set in
+    Goal.in_set b (Value.set minus_a_b) state)*)
+
+let unique_people person_vars =
+  let first_person_var = Base.List.hd_exn person_vars in
+  let rest_person_vars = Base.List.tl_exn person_vars in
+  let first_accum_goal = Goal.in_set first_person_var (Value.set person_set) State.empty in
+  let used_person_vars_set = Base.Set.singleton (module Value.Comparator) first_person_var in
+  let (result, _) = Base.List.fold rest_person_vars ~init:(first_accum_goal, used_person_vars_set) ~f:(fun (accum_goal, used_person_vars_set) person_var -> 
+    let next_used_person_vars_set = Base.Set.add used_person_vars_set person_var in
+    let next_accum_goal = accum_goal |> Base.Sequence.filter_opt |> Base.Sequence.concat_map ~f:(fun state -> 
+      let used_person_set = Base.Set.map (module Value.Comparator) used_person_vars_set ~f:(fun used_person_var -> State.value_of state used_person_var) in
+      let available_person_set = Base.Set.diff person_set used_person_set in
+      Goal.in_set person_var (Value.set available_person_set) state
+    ) in
+    (next_accum_goal, next_used_person_vars_set)
+  ) in
+  result
+
+(*TODO: implement the rest of the example*)
