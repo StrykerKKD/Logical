@@ -24,6 +24,12 @@ let both first_goal second_goal = (fun state ->
   Base.Sequence.interleave sum_states
 )
 
+let both_multi goals = (fun state ->
+  match Base.List.reduce goals ~f:both with
+  | Some combined_goal -> combined_goal state
+  | None -> Base.Sequence.empty
+)
+
 let pursue_desugared_set set variable state =
   let value_list = Base.Set.to_list set in
   let both_goals = Base.List.map value_list ~f:(fun value -> equal (Value.Type.Var variable) value) in
