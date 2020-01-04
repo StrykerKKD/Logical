@@ -8,4 +8,6 @@ val either_multi : goal list -> goal
 
 val both : goal -> goal -> goal
 
+val both_multi : goal list -> goal
+
 val in_set : Type.t -> Type.t -> goal
