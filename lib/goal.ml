@@ -30,15 +30,7 @@ let both_multi goals = (fun state ->
   | None -> Base.Sequence.empty
 )
 
-let pursue_desugared_set set variable state =
-  let value_list = Base.Set.to_list set in
-  let both_goals = Base.List.map value_list ~f:(fun value -> equal (Value.Type.Var variable) value) in
-  let either_goal = either_multi both_goals in 
-  either_goal state
-
-let in_set value_a value_b = (fun state -> 
-  match value_a, value_b with
-  | Value.Type.Var variable, Value.Type.Set set -> pursue_desugared_set set variable state
-  | Value.Type.Set set, Value.Type.Var variable -> pursue_desugared_set set variable state
-  | _ -> Base.Sequence.singleton None
+let in_set value set = (fun state -> 
+  let associationGoals = Base.Set.to_list set |> Base.List.map ~f:(fun element -> equal value element) in
+  either_multi associationGoals state
 )

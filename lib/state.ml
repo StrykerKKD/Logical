@@ -6,8 +6,6 @@ let rec value_of state value =
     (match Base.List.Assoc.find state ~equal:Base.String.equal variable with
     | Some value -> value_of state value
     | None -> Value.Type.Var variable)
-  | Value.Type.Set set -> 
-    Base.Set.map (module Value.Comparator) set ~f:(value_of state) |> Value.set
   | _ -> value
   
 let unify state value_a value_b =
@@ -20,7 +18,7 @@ let unify state value_a value_b =
   | _, _ -> None
 
 let assignment_to_string (variable, value) =
-  "(" ^ variable ^ Value.Type.to_string value ^ ")"
+  "(" ^ variable ^ Value.to_string value ^ ")"
 
 let to_string state =
   let assignments_content = Base.List.map state ~f:assignment_to_string in
