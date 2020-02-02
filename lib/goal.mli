@@ -10,4 +10,4 @@ val both : goal -> goal -> goal
 
 val both_multi : goal list -> goal
 
-val in_set : Type.t -> Type.t -> goal
+val in_set : Type.t -> (Type.t, Type.comparator_witness) Base.Set.t -> goal
