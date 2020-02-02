@@ -277,11 +277,10 @@ let murderer x =
       let variable_set = list_to_var_set ["bathroom"; "kitchen"; "living room"; "pantry"; "study"] in
       Goal.in_set knife_var variable_set state
     );
-    (*(fun state ->
-      let variable_set = list_to_var_set ["bathroom"; "dining"; "kitchen"; "living room"] |> Value.set in
+    (fun state ->
+      let variable_set = list_to_var_set ["bathroom"; "dining"; "kitchen"; "living room"] in
       Goal.in_set (Value.str "yolanda") variable_set state
-    );*)
-    Goal.either_multi [Goal.equal bathroom_var (Value.str "yolanda"); Goal.equal dining_var (Value.str "yolanda"); Goal.equal kitchen_var (Value.str "yolanda"); Goal.equal living_room_var (Value.str "yolanda")];
+    );
     Goal.equal firearm_var (Value.str "george");
     Goal.both_multi [Goal.equal pantry_var gas_var; Goal.equal pantry_var x]
   ]
