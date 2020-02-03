@@ -17,7 +17,9 @@ let rec value_of state value =
   | _ -> value
 
 let add_to_state state variable_name value =
-  Some (Base.Map.change state variable_name ~f:(fun _ -> Some value))
+  match Base.Map.add state ~key:variable_name ~data:value with
+  | `Ok result -> Some result
+  | `Duplicate -> None
 
 let unify state value_a value_b =
   let new_value_a = value_of state value_a in
