@@ -42,11 +42,11 @@ let friend_refl_db =
 
 let friend_querying first_friend second_friend = 
   Base.Sequence.round_robin [
-    friend_db [first_friend_var,first_friend; second_friend_var,second_friend];
-    friend_db [first_friend_var,second_friend; second_friend_var,first_friend]; 
+    friend_db (State.create_exn [first_friend_var,first_friend; second_friend_var,second_friend]);
+    friend_db (State.create_exn [first_friend_var,second_friend; second_friend_var,first_friend]); 
   ]
 
-let friend_state = [first_friend_var, Value.str "julia"; second_friend_var, Value.str "john"]
+let friend_state = State.create_exn [first_friend_var, Value.str "julia"; second_friend_var, Value.str "john"]
 
 let friend_state_stream = friend_refl_db friend_state
 let another_friend_state_stream = (friend_querying (Value.str "julia") (Value.str "john"))
@@ -109,7 +109,7 @@ let child_db =
   ]
 
 let parent_querying parent child = 
-  child_db [child_var,child; parent_var,parent]
+  child_db (State.create_exn [child_var,child; parent_var,parent])
 
 let parent_state_stream = parent_querying (Value.str "jim") (Value.str "john")
 
@@ -119,7 +119,7 @@ let father_querying father child =
   Goal.both
     (Goal.equal (Value.var parent_var) (Value.var male_var))
     (Goal.both child_db male_db) 
-      [child_var,child; parent_var,father; male_var,father]
+      (State.create_exn [child_var,child; parent_var,father; male_var,father])
 
 let father_state_stream = father_querying (Value.str "jim") (Value.str "john")
 
@@ -129,42 +129,42 @@ let mother_querying mother child =
   Goal.both
     (Goal.equal (Value.var parent_var) (Value.var female_var))
     (Goal.both child_db female_db) 
-      [child_var,child; parent_var,mother; female_var,mother]
+      (State.create_exn [child_var,child; parent_var,mother; female_var,mother])
 
 let mother_state_stream = mother_querying (Value.str "marry") (Value.str "john")
 
 let _ = print_state_stream "mother" mother_state_stream
 
 let friendzoned_list_querying lover = 
-  let states = loves_db [first_lover_var,lover] |> Base.Sequence.to_list |> Base.List.filter_opt in
+  let states = loves_db (State.create_exn [first_lover_var,lover]) |> Base.Sequence.to_list |> Base.List.filter_opt in
   Base.List.exists states ~f:(fun state -> 
     let other_lover = State.value_of state (Value.var second_lover_var) in
-    let other_states = loves_db [first_lover_var,other_lover; second_lover_var,lover] |> Base.Sequence.to_list |> Base.List.filter_opt in
+    let other_states = loves_db (State.create_exn [first_lover_var,other_lover; second_lover_var,lover]) |> Base.Sequence.to_list |> Base.List.filter_opt in
     Base.List.length other_states = 0
   )
 
 let _ = friendzoned_list_querying (Value.str "john") |> Printf.printf "%B \n"
 
 let friendzoned_sequence_querying lover = 
-  loves_db [first_lover_var,lover] |> Base.Sequence.filter_opt |> Base.Sequence.exists ~f:(fun state -> 
+  loves_db (State.create_exn [first_lover_var,lover]) |> Base.Sequence.filter_opt |> Base.Sequence.exists ~f:(fun state -> 
     let other_lover = State.value_of state (Value.var second_lover_var) in
-    loves_db [first_lover_var,other_lover; second_lover_var,lover] |> Base.Sequence.filter_opt |> Base.Sequence.length = 0
+    loves_db (State.create_exn [first_lover_var,other_lover; second_lover_var,lover]) |> Base.Sequence.filter_opt |> Base.Sequence.length = 0
   )
 
 let _ = friendzoned_sequence_querying (Value.str "john") |> Printf.printf "%B \n"
 
 let friendzoned_sequence_querying_2 lover = 
-  loves_db [first_lover_var,lover] 
+  loves_db (State.create_exn [first_lover_var,lover])
     |> Base.Sequence.filter_opt
     |> Base.Sequence.concat_map ~f:(fun state ->
       let other_lover = State.value_of state (Value.var second_lover_var) in
-      loves_db [first_lover_var,other_lover; second_lover_var,lover]) 
+      loves_db (State.create_exn [first_lover_var,other_lover; second_lover_var,lover]))
     |> Base.Sequence.filter_opt |> Base.Sequence.length = 0
 
 let _ = friendzoned_sequence_querying_2 (Value.str "john") |> Printf.printf "%B \n"
 
 let friendzoned_set_querying lover = 
-  let other_lovers = loves_db [first_lover_var,lover] 
+  let other_lovers = loves_db (State.create_exn [first_lover_var,lover])
     |> Base.Sequence.to_list 
     |> Base.List.filter_opt 
     |> Base.List.map ~f:(fun state -> State.value_of state (Value.var second_lover_var))
@@ -172,7 +172,7 @@ let friendzoned_set_querying lover =
   Goal.both
     (Goal.in_set (Value.var first_lover_var) other_lovers)
     loves_db
-      [second_lover_var,lover]
+      (State.create_exn [second_lover_var,lover])
 
 let friendzoned_state_stream = friendzoned_set_querying (Value.str "john")
 
@@ -199,7 +199,7 @@ let domain_state_stream = Goal.both_multi [
     (Goal.both
       (Goal.in_set domain_c_var even_smaller_set)
       (Goal.equal domain_c_var domain_e_var)) state)
-] []
+] State.empty
 
 let _ = print_state_stream "domain" domain_state_stream
 
