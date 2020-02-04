@@ -1,6 +1,10 @@
 open Value
 
-val empty : 'a list
+val empty : state
+
+val create : (variable_name * Type.t) list -> state option
+
+val create_exn : (variable_name * Type.t) list -> state
 
 val value_of : state -> Type.t -> Type.t
 

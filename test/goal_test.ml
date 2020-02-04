@@ -2,19 +2,19 @@ open Logical
 open Goal
 
 let test_equal_on_value_variable_and_empty_state () =
-  let expected = [Some ["a",Value.int 1]] in
+  let expected = [Some (State.create_exn ["a",Value.int 1])] in
   let actual = equal (Value.var "a") (Value.int 1) State.empty |> Base.Sequence.to_list in
   Alcotest.(check int) "equal should return with state which contains the value variable" 
     0 (compare expected actual)
 
 let test_equal_on_value_variable_and_matching_state () =
-  let expected = [Some ["a",Value.int 1;"b",Value.int 1]] in
-  let actual = equal (Value.var "a") (Value.var "b") ["b",Value.int 1] |> Base.Sequence.to_list in
+  let expected = [Some (State.create_exn ["b",Value.int 1;"a",Value.int 1])] in
+  let actual = equal (Value.var "a") (Value.var "b") (State.create_exn ["b",Value.int 1]) |> Base.Sequence.to_list in
   Alcotest.(check int) "equal should return with state which contains the value variable" 
     0 (compare expected actual)
 
 let test_either_on_variables_and_empty_state () =
-  let expected = [Some["a",Value.int 1]; Some["b",Value.int 2]] in
+  let expected = [Some (State.create_exn ["a",Value.int 1]); Some (State.create_exn ["b",Value.int 2])] in
   let actual = either 
     (equal (Value.var "a") (Value.int 1)) (equal (Value.var "b") (Value.int 2)) State.empty
     |> Base.Sequence.to_list in
@@ -22,7 +22,7 @@ let test_either_on_variables_and_empty_state () =
     0 (compare expected actual)
 
 let test_either_multi_on_variables_and_empty_state () =
-  let expected = [Some["a",Value.int 1]; Some["b",Value.int 2]] in
+  let expected = [Some (State.create_exn ["a",Value.int 1]); Some (State.create_exn ["b",Value.int 2])] in
   let actual = either_multi
     [equal (Value.var "a") (Value.int 1); equal (Value.var "b") (Value.int 2)] State.empty
     |> Base.Sequence.to_list in
@@ -30,7 +30,7 @@ let test_either_multi_on_variables_and_empty_state () =
     0 (compare expected actual)
 
 let test_both_on_variables_and_empty_state () =
-  let expected = [Some["b",Value.int 2; "a",Value.int 1]] in
+  let expected = [Some (State.create_exn ["a",Value.int 1; "b",Value.int 2])] in
   let actual = both 
     (equal (Value.var "a") (Value.int 1)) (equal (Value.var "b") (Value.int 2)) State.empty
     |> Base.Sequence.to_list in
@@ -39,7 +39,7 @@ let test_both_on_variables_and_empty_state () =
 
 let test_in_set_on_variables_and_empty_state () =
   let test_set = Base.Set.of_list (module Value.Type) [Value.int 1; Value.int 2] in
-  let expected = [Some["a",Value.int 1]; Some["a",Value.int 2]] in
+  let expected = [Some (State.create_exn ["a",Value.int 1]); Some (State.create_exn ["a",Value.int 2])] in
   let actual = in_set (Value.var "a") test_set State.empty |> Base.Sequence.to_list in
   Alcotest.(check int) "in_set should return goal result like either, but with only one variable" 
     0 (compare expected actual)

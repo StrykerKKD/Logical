@@ -31,6 +31,6 @@ let both_multi goals = (fun state ->
 )
 
 let in_set value set = (fun state -> 
-  let associationGoals = Base.Set.to_list set |> Base.List.map ~f:(fun element -> equal value element) in
-  either_multi associationGoals state
+  let assingmentGoals = Base.Set.to_list set |> Base.List.map ~f:(fun element -> equal value element) in
+  either_multi assingmentGoals state
 )

@@ -1,4 +1,4 @@
-type variable = string
+type variable_name = string
 
 module Type = struct
   module T = struct
@@ -7,7 +7,7 @@ module Type = struct
     | Float of float
     | Str of string
     | Bool of bool
-    | Var of variable
+    | Var of variable_name
   let compare first_tagged_value second_tagged_value =
     match first_tagged_value, second_tagged_value with
     | Int first_value, Int second_value -> Base.Int.compare first_value second_value
@@ -29,7 +29,7 @@ module Type = struct
   include Base.Comparator.Make(T)
 end
 
-type state = (variable * Type.t) list
+type state = (variable_name, Type.t, Base.String.comparator_witness) Base.Map.t
 
 type goal = state -> state option Base.Sequence.t
 
@@ -41,6 +41,6 @@ let str value = Type.Str value
 
 let bool value = Type.Bool value
 
-let var value = Type.Var value
+let var variable_name = Type.Var variable_name
 
 let to_string = Type.to_string
