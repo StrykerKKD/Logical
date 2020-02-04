@@ -38,7 +38,7 @@ let test_both_on_variables_and_empty_state () =
     0 (compare expected actual)
 
 let test_in_set_on_variables_and_empty_state () =
-  let test_set = Base.Set.of_list (module Value.Type) [Value.int 1; Value.int 2] in
+  let test_set = Base.Set.of_list (module Type) [Value.int 1; Value.int 2] in
   let expected = [Some (State.create_exn ["a",Value.int 1]); Some (State.create_exn ["a",Value.int 2])] in
   let actual = in_set (Value.var "a") test_set State.empty |> Base.Sequence.to_list in
   Alcotest.(check int) "in_set should return goal result like either, but with only one variable" 
