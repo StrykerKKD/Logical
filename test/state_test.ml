@@ -17,19 +17,19 @@ let test_value_of_on_non_variable () =
   let expected = Value.int 1 in
   let actual = value_of empty (Value.int 1) in
   Alcotest.(check int) "value_of should return value directly in case of value input"
-    0 (Value.Type.compare expected actual)
+    0 (Type.compare expected actual)
 
 let test_value_of_on_non_matching_variable () =
   let expected = Value.var "a" in
   let actual = value_of (State.create_exn ["b",Value.int 2]) (Value.var "a") in
   Alcotest.(check int) "value_of should return new variable in non matching case"
-    0 (Value.Type.compare expected actual)
+    0 (Type.compare expected actual)
 
 let test_value_of_on_matching_variable () =
   let expected = Value.int 1 in
   let actual = value_of (State.create_exn ["a",Value.int 1]) (Value.var "a") in
   Alcotest.(check int) "value_of should return value in matching case"
-    0 (Value.Type.compare expected actual)
+    0 (Type.compare expected actual)
 
 let test_unify_on_equal_variable_values () =
   let expected = Some (State.create_exn ["a",Value.int 1; "b",Value.int 1]) in

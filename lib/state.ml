@@ -10,10 +10,10 @@ let create_exn assignments =
 
 let rec value_of state value =
   match value with
-  | Value.Type.Var variable_name -> 
+  | Type.Var variable_name -> 
     (match Base.Map.find state variable_name with
     | Some value -> value_of state value
-    | None -> Value.Type.Var variable_name)
+    | None -> Type.Var variable_name)
   | _ -> value
 
 let add_to_state state variable_name value =
@@ -25,9 +25,9 @@ let unify state value_a value_b =
   let new_value_a = value_of state value_a in
   let new_value_b = value_of state value_b in
   match new_value_a, new_value_b with
-  | a, b when (Value.Type.compare a b) = 0 -> Some state
-  | Value.Type.Var variable_name, value -> add_to_state state variable_name value
-  | value, Value.Type.Var variable_name -> add_to_state state variable_name value
+  | a, b when (Type.compare a b) = 0 -> Some state
+  | Type.Var variable_name, value -> add_to_state state variable_name value
+  | value, Type.Var variable_name -> add_to_state state variable_name value
   | _, _ -> None
 
 let assignment_to_string ~key ~data acc =

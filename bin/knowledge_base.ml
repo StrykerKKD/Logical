@@ -168,7 +168,7 @@ let friendzoned_set_querying lover =
     |> Base.Sequence.to_list 
     |> Base.List.filter_opt 
     |> Base.List.map ~f:(fun state -> State.value_of state (Value.var second_lover_var))
-    |> Base.Set.of_list (module Value.Type) in
+    |> Base.Set.of_list (module Type) in
   Goal.both
     (Goal.in_set (Value.var first_lover_var) other_lovers)
     loves_db
@@ -185,7 +185,7 @@ let domain_c_var = Value.var "domain_c_var"
 let domain_d_var = Value.var "domain_d_var"
 let domain_e_var = Value.var "domain_e_var"
 
-let universal_set = Base.Set.of_list (module Value.Type) [Value.str "red"; Value.str "green"; Value.str "blue"]
+let universal_set = Base.Set.of_list (module Type) [Value.str "red"; Value.str "green"; Value.str "blue"]
 let domain_state_stream = Goal.both_multi [
   Goal.in_set domain_a_var universal_set;
   (fun state -> 
@@ -204,11 +204,11 @@ let domain_state_stream = Goal.both_multi [
 let _ = print_state_stream "domain" domain_state_stream
 
 
-let man_set = Base.Set.of_list (module Value.Type) [Value.str "george"; Value.str "john"; Value.str "robert"]
-let woman_set = Base.Set.of_list (module Value.Type) [Value.str "barbara"; Value.str "christine"; Value.str "yolanda"]
+let man_set = Base.Set.of_list (module Type) [Value.str "george"; Value.str "john"; Value.str "robert"]
+let woman_set = Base.Set.of_list (module Type) [Value.str "barbara"; Value.str "christine"; Value.str "yolanda"]
 let person_set = Base.Set.union man_set woman_set
-let location_set = Base.Set.of_list (module Value.Type) [Value.str "bathroom"; Value.str "dining"; Value.str "kitchen"; Value.str "living room"; Value.str "pantry"; Value.str "study"]
-let weapon_set = Base.Set.of_list (module Value.Type) [Value.str "bag"; Value.str "firearm"; Value.str "gas"; Value.str "knife"; Value.str "poison"; Value.str "rope"]
+let location_set = Base.Set.of_list (module Type) [Value.str "bathroom"; Value.str "dining"; Value.str "kitchen"; Value.str "living room"; Value.str "pantry"; Value.str "study"]
+let weapon_set = Base.Set.of_list (module Type) [Value.str "bag"; Value.str "firearm"; Value.str "gas"; Value.str "knife"; Value.str "poison"; Value.str "rope"]
 
 let bathroom_var = Value.var "bathroom"
 let dining_var = Value.var "dining"
@@ -228,11 +228,11 @@ let unique_people_goal person_vars state =
   let first_person_var = Base.List.hd_exn person_vars in
   let rest_person_vars = Base.List.tl_exn person_vars in
   let first_accum_goal = Goal.in_set first_person_var person_set in
-  let used_person_vars_set = Base.Set.singleton (module Value.Type) first_person_var in
+  let used_person_vars_set = Base.Set.singleton (module Type) first_person_var in
   let (result_goals, _) = Base.List.fold rest_person_vars ~init:([first_accum_goal], used_person_vars_set) ~f:(fun (accum_goal, used_person_vars_set) person_var -> 
     let next_used_person_vars_set = Base.Set.add used_person_vars_set person_var in
     let next_goal = (fun state -> 
-      let used_person_set = Base.Set.map (module Value.Type) used_person_vars_set ~f:(fun used_person_var -> State.value_of state used_person_var) in
+      let used_person_set = Base.Set.map (module Type) used_person_vars_set ~f:(fun used_person_var -> State.value_of state used_person_var) in
       let available_person_set = Base.Set.diff person_set used_person_set in
       Goal.in_set person_var available_person_set state
     ) in
@@ -242,11 +242,11 @@ let unique_people_goal person_vars state =
 
 let list_to_str_set list =
   let mapped_list = Base.List.map list ~f:(fun element -> Value.str element) in
-  (Base.Set.of_list (module Value.Type) mapped_list)
+  (Base.Set.of_list (module Type) mapped_list)
 
 let list_to_var_set list =
   let mapped_list = Base.List.map list ~f:(fun element -> Value.var element) in
-  (Base.Set.of_list (module Value.Type) mapped_list)
+  (Base.Set.of_list (module Type) mapped_list)
 
 (* You can make this faster by moving the two unique_people_goal calls to the bottom. *)
 let murderer x =

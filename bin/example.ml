@@ -31,6 +31,6 @@ let both_result = Goal.both
   State.empty
 let () = print_state_stream "both_result" both_result
 
-let my_set = Base.Set.of_list (module Value.Type) [Value.int 1; Value.int 2; Value.int 3]
+let my_set = Base.Set.of_list (module Type) [Value.int 1; Value.int 2; Value.int 3]
 let in_set_result = Goal.in_set (Value.var "a") my_set State.empty
 let () = print_state_stream "in_set_result" in_set_result

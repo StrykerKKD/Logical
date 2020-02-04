@@ -1,6 +1,6 @@
-open Value
+open Type
 
-val equal : Type.t -> Type.t -> goal
+val equal : t -> t -> goal
 
 val either : goal -> goal -> goal
 
@@ -10,4 +10,4 @@ val both : goal -> goal -> goal
 
 val both_multi : goal list -> goal
 
-val in_set : Type.t -> (Type.t, Type.comparator_witness) Base.Set.t -> goal
+val in_set : t -> (t, comparator_witness) Base.Set.t -> goal
