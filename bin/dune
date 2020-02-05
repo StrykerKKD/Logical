@@ -1,4 +1,4 @@
 (executables
-  (names example knowledge_base)
-  (public_names example knowledge_base)
+  (names example knowledge_base map_coloring murder_mystery)
+  (public_names example knowledge_base map_coloring murder_mystery)
   (libraries logical base))
