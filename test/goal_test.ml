@@ -37,6 +37,14 @@ let test_both_on_variables_and_empty_state () =
   Alcotest.(check int) "both should return goal results in one state" 
     0 (compare expected actual)
 
+let test_both_multi_on_variables_and_empty_state () =
+  let expected = [Some (State.create_exn ["a",Value.int 1; "b",Value.int 2])] in
+  let actual = both_multi 
+    [equal (Value.var "a") (Value.int 1); equal (Value.var "b") (Value.int 2)] State.empty
+    |> Base.Sequence.to_list in
+  Alcotest.(check int) "both should return goal results in one state" 
+    0 (compare expected actual)
+
 let test_in_set_on_variables_and_empty_state () =
   let test_set = Base.Set.of_list (module Type) [Value.int 1; Value.int 2] in
   let expected = [Some (State.create_exn ["a",Value.int 1]); Some (State.create_exn ["a",Value.int 2])] in
@@ -50,5 +58,6 @@ let tests = [
   "test_either_on_variables_and_empty_state", `Quick, test_either_on_variables_and_empty_state;
   "test_either_multi_on_variables_and_empty_state", `Quick, test_either_multi_on_variables_and_empty_state;
   "test_both_on_variables_and_empty_state", `Quick, test_both_on_variables_and_empty_state;
+  "test_both_multi_on_variables_and_empty_state", `Quick, test_both_multi_on_variables_and_empty_state;
   "test_in_set_on_variables_and_empty_state", `Quick, test_in_set_on_variables_and_empty_state;
 ]
